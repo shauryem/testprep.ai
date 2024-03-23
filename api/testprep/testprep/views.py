@@ -4,9 +4,14 @@ from rest_framework.response import Response
 import openai
 from django.conf import settings
 import json
+import logging
+
+logger = logging.getLogger('API_LOGS')
 
 @api_view(['POST'])
 def ask_question(request):
+    logger.debug('WHERE ARE WE')
+    logger.debug(request.body)
     openai.api_key = settings.OPENAI_API_KEY
     client = openai.OpenAI(api_key=openai.api_key)
 

@@ -5,7 +5,7 @@
  * @format
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   SafeAreaView,
@@ -15,37 +15,9 @@ import {
   Text,
   useColorScheme,
   View,
+  Button,
+  TextInput
 } from 'react-native';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? '#eee' : '#333',
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? '#eee' : '#333',
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -53,6 +25,56 @@ function App(): React.JSX.Element {
   const backgroundStyle = {
     backgroundColor: isDarkMode ? '#000' : '#fff',
   };
+
+  const [inputText, setInputText] = useState('')
+
+  const [questionList, setQuestionList] = useState('')
+
+  const apiUrl = 'http://localhost:8000/ask/';
+
+  const apiBodyData = {
+    "number_of_questions": "3",
+    "input_type": "multiple choice",
+    "difficulty_level": "difficult",
+    "input": inputText
+  };
+
+  const handleSubmitPress = async () => {
+    console.log("WHY R U DUMB")
+    fetch(apiUrl, {
+      method: 'POST', // Use the POST method
+      headers: {
+        'Content-Type': 'application/json', // Indicate we're sending JSON data
+      },
+      body: JSON.stringify(apiBodyData), // Convert the JavaScript object to a JSON string
+    }).then(async response => {
+        // Check if the response is successful (status code 200-299)
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const jsonResponse = await response.json(); // Parse JSON body of the response
+        setQuestionList(jsonResponse)
+        return jsonResponse
+      })
+      .then(data => {
+        // `data` is the parsed JavaScript object returned by the API
+        console.log(data);
+      })
+      .catch(error => {
+        // Handle any errors that occurred during the fetch
+        console.error('There was a problem with the fetch operation:', error);
+      });
+  }
+
+  const areQuestionsGenerated = () => {
+    return questionList !== ''
+  }
+
+  const resetPage = () => {
+    setQuestionList('')
+    setInputText('')
+  }
+
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -67,17 +89,26 @@ function App(): React.JSX.Element {
           style={{
             backgroundColor: isDarkMode ? '#000' : '#fff',
           }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-          </Section>
-          <Section title="Debug">
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
+          <Button
+              title="Reset" // Use the `title` prop for the button label
+              onPress={resetPage}
+          />
+          {!areQuestionsGenerated() ?
+          <View> 
+            <Text style={styles.highlight}>Enter content to list questions:</Text>
+            <TextInput
+              style={styles.input}
+              value={inputText}
+              onChangeText={setInputText} // Update the state variable whenever the text changes
+              placeholder="Enter content here."
+            />
+            <Button
+              title="Click me" // Use the `title` prop for the button label
+              onPress={handleSubmitPress}
+            />
+          </View>: 
+          <Text>{JSON.stringify(questionList)}</Text>
+          }
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -100,6 +131,14 @@ const styles = StyleSheet.create({
   },
   highlight: {
     fontWeight: '700',
+  },
+  input: {
+    // TextInput styles
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+    width: '80%', // Example width
   },
 });
 
