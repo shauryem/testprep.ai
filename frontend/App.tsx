@@ -28,19 +28,23 @@ function App(): React.JSX.Element {
 
   const [inputText, setInputText] = useState('')
 
+  const [specifiedTopic, setSpecifiedTopic] = useState('')
+
   const [questionList, setQuestionList] = useState('')
 
   const apiUrl = 'http://localhost:8000/ask/';
 
   const apiBodyData = {
-    "number_of_questions": "3",
-    "input_type": "multiple choice",
-    "difficulty_level": "difficult",
-    "input": inputText
+    "data" : {
+      "number_of_questions": "3",
+      "input_type": "multiple choice",
+      "difficulty_level": "difficult",
+      "input": inputText,
+      "specified_topic": specifiedTopic
+    }
   };
 
   const handleSubmitPress = async () => {
-    console.log("WHY R U DUMB")
     fetch(apiUrl, {
       method: 'POST', // Use the POST method
       headers: {
@@ -73,6 +77,7 @@ function App(): React.JSX.Element {
   const resetPage = () => {
     setQuestionList('')
     setInputText('')
+    setSpecifiedTopic('')
   }
 
 
@@ -101,6 +106,12 @@ function App(): React.JSX.Element {
               value={inputText}
               onChangeText={setInputText} // Update the state variable whenever the text changes
               placeholder="Enter content here."
+            />
+            <TextInput
+              style={styles.input}
+              value={specifiedTopic}
+              onChangeText={setSpecifiedTopic} // Update the state variable whenever the text changes
+              placeholder="Enter a specific topic you'd like to focus on."
             />
             <Button
               title="Click me" // Use the `title` prop for the button label

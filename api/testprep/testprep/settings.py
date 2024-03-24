@@ -146,7 +146,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-OPENAI_API_KEY = 'sk-9FBPz'
+OPENAI_API_KEY = 'whoopleen'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
