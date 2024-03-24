@@ -38,8 +38,30 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
     'corsheaders'
 ]
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+SITE_ID = 2
+
+# Optional settings for django-allauth
+LOGIN_REDIRECT_URL = '/'  # Redirect to home after login
+ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/login/'  # Redirect to login after logout
+ACCOUNT_SESSION_REMEMBER = True  # Remember the user's session
+ACCOUNT_SIGNUP_FORM_CLASS = None  # Specify a custom signup form if needed
+ACCOUNT_AUTHENTICATION_METHOD = 'email'  # Use email for authentication
+ACCOUNT_EMAIL_REQUIRED = True  # Email is required
+ACCOUNT_UNIQUE_EMAIL = True  # Email must be unique
+ACCOUNT_USERNAME_REQUIRED = False  # No username required
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -50,6 +72,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 LOGGING = {
@@ -61,12 +84,8 @@ LOGGING = {
         },
     },
     'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'DEBUG',  # Set the logging level here
-        },
         # Example: Setting logging level for your app
-        'myapp': {  # Replace 'myapp' with the name of your Django app
+        'testprep': {  # Replace 'myapp' with the name of your Django app
             'handlers': ['console'],
             'level': 'DEBUG',  # Log messages at DEBUG level and above
         },
@@ -127,7 +146,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-OPENAI_API_KEY = 'whoopleen'
+OPENAI_API_KEY = 'sk-9FBPz'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/

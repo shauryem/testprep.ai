@@ -6,7 +6,15 @@ from django.conf import settings
 import json
 import logging
 
+
 logger = logging.getLogger('API_LOGS')
+
+def home_view(request):
+    data = {
+        'message': 'Welcome to the Home Page!',
+        'status': 'success'
+    }
+    return JsonResponse(data)
 
 @api_view(['POST'])
 def ask_question(request):
