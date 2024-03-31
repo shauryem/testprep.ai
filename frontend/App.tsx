@@ -16,8 +16,23 @@ import {
   useColorScheme,
   View,
   Button,
-  TextInput
+  TextInput,
+  TouchableOpacity
 } from 'react-native';
+
+interface Question {
+  question: string;
+  options: string[]; // Since your options are strings like "A: Option 1"
+  correctAnswer: string; // This will correspond to the correct option directly, e.g., "C: Option 3"
+}
+
+interface Test {
+  questions: Question[];
+}
+
+interface UserAnswers {
+  [questionIndex: number]: string; // Maps a question index to the user's selected answer
+}
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -26,21 +41,16 @@ function App(): React.JSX.Element {
     backgroundColor: isDarkMode ? '#000' : '#fff',
   };
 
-  const [inputText, setInputText] = useState('')
-
-  const [specifiedTopic, setSpecifiedTopic] = useState('')
-
-  const [questionList, setQuestionList] = useState('')
+  const [questionList, setQuestionList] = useState<Test>({ questions: [] });
+  const [answers, setAnswers] = useState<UserAnswers>({});
 
   const apiUrl = 'http://localhost:8000/ask/';
 
   const apiBodyData = {
     "data" : {
-      "number_of_questions": "3",
-      "input_type": "multiple choice",
       "difficulty_level": "difficult",
-      "input": inputText,
-      "specified_topic": specifiedTopic
+      "state": "California",
+      "num_questions": '3'
     }
   };
 
@@ -57,7 +67,9 @@ function App(): React.JSX.Element {
           throw new Error('Network response was not ok');
         }
         const jsonResponse = await response.json(); // Parse JSON body of the response
+        console.log(jsonResponse)
         setQuestionList(jsonResponse)
+        
         return jsonResponse
       })
       .then(data => {
@@ -71,14 +83,47 @@ function App(): React.JSX.Element {
   }
 
   const areQuestionsGenerated = () => {
-    return questionList !== ''
+    return questionList.questions.length > 0
   }
 
   const resetPage = () => {
-    setQuestionList('')
-    setInputText('')
-    setSpecifiedTopic('')
+    setQuestionList({ questions: [] })
   }
+
+  const renderQuestionsList = () => {
+    if (!areQuestionsGenerated) {
+      return
+    } else {
+      // Parse the JSON string inside the `questions` key
+      const handlePress = (questionIndex: number, option: string) => {
+        setAnswers({
+          ...answers,
+          [questionIndex]: option,
+        });
+      };
+      return (
+        <ScrollView style={styles.container}>
+          {questionList.questions.map((question: any, index: number) => (
+            <View key={index} style={styles.questionContainer}>
+              <Text style={styles.question}>{question.question}</Text>
+              {question.options.map((option: string, optionIndex: number) => (
+                <TouchableOpacity
+                  key={optionIndex}
+                  style={[
+                    styles.option,
+                    answers[index] === option && styles.selectedOption,
+                  ]}
+                  onPress={() => handlePress(index, option)}
+                >
+                  <Text style={styles.optionText}>{option}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+                ))}
+        </ScrollView>
+      );
+    }
+  };
 
 
   return (
@@ -100,25 +145,12 @@ function App(): React.JSX.Element {
           />
           {!areQuestionsGenerated() ?
           <View> 
-            <Text style={styles.highlight}>Enter content to list questions:</Text>
-            <TextInput
-              style={styles.input}
-              value={inputText}
-              onChangeText={setInputText} // Update the state variable whenever the text changes
-              placeholder="Enter content here."
-            />
-            <TextInput
-              style={styles.input}
-              value={specifiedTopic}
-              onChangeText={setSpecifiedTopic} // Update the state variable whenever the text changes
-              placeholder="Enter a specific topic you'd like to focus on."
-            />
             <Button
-              title="Click me" // Use the `title` prop for the button label
+              title="Generate test" // Use the `title` prop for the button label
               onPress={handleSubmitPress}
             />
           </View>: 
-          <Text>{JSON.stringify(questionList)}</Text>
+          renderQuestionsList()
           }
         </View>
       </ScrollView>
@@ -150,6 +182,29 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     width: '80%', // Example width
+  },
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+  questionContainer: {
+    marginBottom: 20,
+  },
+  question: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  option: {
+    backgroundColor: '#f0f0f0',
+    padding: 10,
+    marginBottom: 10,
+  },
+  selectedOption: {
+    backgroundColor: 'skyblue',
+  },
+  optionText: {
+    fontSize: 15,
   },
 });
 
