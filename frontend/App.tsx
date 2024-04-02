@@ -5,157 +5,16 @@
  * @format
  */
 
-import React, { useState } from 'react';
-import type {PropsWithChildren} from 'react';
+import React from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-  Button,
-  TextInput,
-  TouchableOpacity
 } from 'react-native';
-
-interface Question {
-  question: string;
-  options: string[]; // Since your options are strings like "A: Option 1"
-  correctAnswer: string; // This will correspond to the correct option directly, e.g., "C: Option 3"
-}
-
-interface Test {
-  questions: Question[];
-}
-
-interface UserAnswers {
-  [questionIndex: number]: string; // Maps a question index to the user's selected answer
-}
+import { AppNavigator } from './AppNavigator';
 
 function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+  const currentRoute = 'Home';
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? '#000' : '#fff',
-  };
-
-  const [questionList, setQuestionList] = useState<Test>({ questions: [] });
-  const [answers, setAnswers] = useState<UserAnswers>({});
-
-  const apiUrl = 'http://localhost:8000/ask/';
-
-  const apiBodyData = {
-    "data" : {
-      "difficulty_level": "difficult",
-      "state": "California",
-      "num_questions": '3'
-    }
-  };
-
-  const handleSubmitPress = async () => {
-    fetch(apiUrl, {
-      method: 'POST', // Use the POST method
-      headers: {
-        'Content-Type': 'application/json', // Indicate we're sending JSON data
-      },
-      body: JSON.stringify(apiBodyData), // Convert the JavaScript object to a JSON string
-    }).then(async response => {
-        // Check if the response is successful (status code 200-299)
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const jsonResponse = await response.json(); // Parse JSON body of the response
-        console.log(jsonResponse)
-        setQuestionList(jsonResponse)
-        
-        return jsonResponse
-      })
-      .then(data => {
-        // `data` is the parsed JavaScript object returned by the API
-        console.log(data);
-      })
-      .catch(error => {
-        // Handle any errors that occurred during the fetch
-        console.error('There was a problem with the fetch operation:', error);
-      });
-  }
-
-  const areQuestionsGenerated = () => {
-    return questionList.questions.length > 0
-  }
-
-  const resetPage = () => {
-    setQuestionList({ questions: [] })
-  }
-
-  const renderQuestionsList = () => {
-    if (!areQuestionsGenerated) {
-      return
-    } else {
-      // Parse the JSON string inside the `questions` key
-      const handlePress = (questionIndex: number, option: string) => {
-        setAnswers({
-          ...answers,
-          [questionIndex]: option,
-        });
-      };
-      return (
-        <ScrollView style={styles.container}>
-          {questionList.questions.map((question: any, index: number) => (
-            <View key={index} style={styles.questionContainer}>
-              <Text style={styles.question}>{question.question}</Text>
-              {question.options.map((option: string, optionIndex: number) => (
-                <TouchableOpacity
-                  key={optionIndex}
-                  style={[
-                    styles.option,
-                    answers[index] === option && styles.selectedOption,
-                  ]}
-                  onPress={() => handlePress(index, option)}
-                >
-                  <Text style={styles.optionText}>{option}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-                ))}
-        </ScrollView>
-      );
-    }
-  };
-
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <View
-          style={{
-            backgroundColor: isDarkMode ? '#000' : '#fff',
-          }}>
-          <Button
-              title="Reset" // Use the `title` prop for the button label
-              onPress={resetPage}
-          />
-          {!areQuestionsGenerated() ?
-          <View> 
-            <Button
-              title="Generate test" // Use the `title` prop for the button label
-              onPress={handleSubmitPress}
-            />
-          </View>: 
-          renderQuestionsList()
-          }
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
+  return <AppNavigator route={currentRoute} />;
 }
 
 const styles = StyleSheet.create({

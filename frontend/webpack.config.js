@@ -11,6 +11,17 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.(png|jpe?g|gif|svg)$/i, // Regex to match image files
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: 'images/[name].[ext]', // Output path for images
+            },
+          },
+        ],
+      },
+      {
         test: /\.(ts|tsx)$/,
         use: [
           {
