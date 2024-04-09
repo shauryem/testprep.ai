@@ -10,6 +10,7 @@ import {
   Button,
 } from 'react-native';
 import { RootStackParamList } from './AppNavigator';
+import { renderAuthHeader } from './Headers';
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
@@ -18,11 +19,6 @@ type HomeScreenProps = {
 };
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }: HomeScreenProps) => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? '#000' : '#fff',
-  };
 
   const apiUrl = 'http://localhost:8000/ask/';
 
@@ -63,18 +59,11 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }: HomeScreenProps) 
   }
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
+    <SafeAreaView>
+      {renderAuthHeader()}
       <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <View
-          style={{
-            backgroundColor: isDarkMode ? '#000' : '#fff',
-          }}>
+        contentInsetAdjustmentBehavior="automatic">
+        <View>
           <View> 
             <Button
               title="Generate test" // Use the `title` prop for the button label

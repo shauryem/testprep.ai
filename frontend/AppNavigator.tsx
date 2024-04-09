@@ -4,15 +4,12 @@ import { NavigationContainer } from '@react-navigation/native';
 import HomeScreen from './Home';
 import AssessmentScreen from './Assessment';
 import { Test } from './types';
+import { Text, View } from 'react-native';
+import { renderAuthHeader } from './Headers';
 
 type RouteName = 'Home' | 'Assessment';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
-
-const screenComponents = {
-  Home: HomeScreen,
-  Assessment: AssessmentScreen
-};
 
 export type RootStackParamList = {
     Home: undefined; // Indicates that Home doesn't expect any parameters.
@@ -31,9 +28,16 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ route }) => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={route}>
-        <Stack.Screen name={"Home"} component={HomeScreen} />
-        <Stack.Screen name="Assessment" component={AssessmentScreen} />
+      <Stack.Navigator 
+      initialRouteName={route}>
+        <Stack.Screen 
+          name={"Home"} 
+          component={HomeScreen}
+          />
+        <Stack.Screen
+          name="Assessment" 
+          component={AssessmentScreen}
+          />
       </Stack.Navigator>
     </NavigationContainer>
   );
