@@ -93,7 +93,7 @@ LOGGING = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:8080',  # And here
+    'http://localhost:8081',  # And here
 ]
 
 ROOT_URLCONF = 'testprep.urls'
