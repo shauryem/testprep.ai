@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import openai
 from django.conf import settings
+from .models import Test, Question
 import json
 import logging
 
@@ -102,3 +103,50 @@ Generate a string representation of an array for a [state] real estate exam samp
             return Response({'Error when parsing generated questions string as JSON.'}, status=500)
     except Exception as e:
         return Response({'error': str(e)}, status=500)
+
+@api_view(['POST'])
+def create_test_from_json(request):
+    try:
+        # Parse JSON data from request body
+        data = json.loads(request.body)
+        
+        # Create a new Test instance
+        test = Test.objects.create(
+            name=data['name'],
+        )
+        
+        # Iterate through questions and create each one
+        for question_data in data['questions']:
+            Question.objects.create(
+                test=test,
+                text=question_data['text'],
+                choices=json.dumps(question_data['choices']),
+                correct_answer=question_data['correct_answer']
+            )
+        
+        return JsonResponse({'status': 'success', 'message': 'Test and questions saved successfully.'})
+    
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+@api_view(['GET'])
+def get_all_tests_with_questions(request):
+    # Query all tests along with related questions using select_related or prefetch_related
+    tests = Test.objects.prefetch_related('questions').all()
+
+    # Prepare data for JSON response
+    tests_data = [{
+        'id': test.id,
+        'name': test.name,
+        'created_at': test.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+        'questions': [
+            {
+                'text': question.text,
+                'choices': question.choices,  # Assuming this is already in a suitable JSON format (list/dict)
+                'correct_answer': question.correct_answer
+            }
+            for question in test.questions.all()
+        ]
+    } for test in tests]
+
+    return JsonResponse(tests_data, safe=False)  # 'safe=False' is needed to allow top-level lists

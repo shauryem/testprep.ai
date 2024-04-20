@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include  # Ensure include is imported here
-from .views import ask_question, home_view
+from .views import ask_question, home_view, create_test_from_json, get_all_tests_with_questions
 
 
 urlpatterns = [
@@ -24,7 +24,8 @@ urlpatterns = [
     path('ask/', ask_question, name='ask_question'),
     path('accounts/', include('allauth.urls')),
     path('', home_view, name='home'),
-
+    path('create-test/', create_test_from_json, name='create_test_from_json'),
+    path('tests/', get_all_tests_with_questions, name='get_all_tests_with_questions'),
 
 
 ]
