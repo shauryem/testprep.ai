@@ -1,1 +1,5 @@
 api/testprep/testprep/__pycache__/*
+api/testprep/testprep/migrations/__pycache__/*
+api/testprep/db.sqlite3
+api/testprep/*
+expo-app/.env

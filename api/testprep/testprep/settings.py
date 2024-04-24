@@ -9,25 +9,27 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
+import os
+from dotenv import load_dotenv
+
 
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv(os.path.join(BASE_DIR, '.env.dev'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-#)$2x*(1a2+ji3#7aq(+&%yl46dofj#s3n3%x(so*pvs-lwxa1'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG') == 'True'
 
-ALLOWED_HOSTS = []
-
-
+ALLOWED_HOSTS = ['localhost']
 # Application definition
 
 INSTALLED_APPS = [
@@ -46,6 +48,20 @@ INSTALLED_APPS = [
     'corsheaders',
     'testprep'
 ]
+
+# Provider specific settings
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        # For each OAuth based provider, either add a ``SocialApp``
+        # (``socialaccount`` app) containing the required client
+        # credentials, or list them here:
+        'APP': {
+            'client_id': os.getenv('GOOGLE_CLIENT_ID'),
+            'secret': os.getenv('GOOGLE_CLIENT_SECRET'),
+            'key': ''
+        }
+    }
+}
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -147,7 +163,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-OPENAI_API_KEY = 'whoopleen'
+OPENAI_API_KEY = os.getenv('OPEN_API_KEY')
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/

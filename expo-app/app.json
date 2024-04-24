@@ -15,16 +15,20 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.expoapp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.anonymous.expoapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "scheme":"realtor-exam-ai",
+    "platforms": ["web", "ios", "android"]
   }
 }
