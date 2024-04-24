@@ -10,7 +10,7 @@ import {
   Button,
   TouchableOpacity
 } from 'react-native';
-import { Test, UserAnswers } from '../frontend/types';
+import { UserAnswers } from './types';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from './AppNavigator';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
